@@ -1,6 +1,6 @@
 {
     "name": "jeffersongoncalves/laravel-markdown",
-    "description": "A shared CommonMark renderer for Laravel with GitHub Flavored Markdown, optional heading permalinks, and server-side syntax highlighting (class-based tokens) via tempest/highlight. Renders raw HTML for trusted-pipeline rendering — pair with jeffersongoncalves/laravel-html-sanitizer before displaying untrusted content.",
+    "description": "A shared CommonMark renderer for Laravel with GitHub Flavored Markdown, optional heading permalinks, and server-side syntax highlighting (class-based tokens) via tempest/highlight. Safe by default: raw HTML is escaped unless you opt in to html_input=allow for trusted content. Requires PHP 8.4 because the syntax highlighter tempest/highlight requires it from 2.26 onward.",
     "keywords": [
         "jeffersongoncalves",
         "laravel",
@@ -26,8 +26,8 @@
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.0",
         "orchestra/testbench": "^9.0|^10.0|^11.0",
-        "pestphp/pest": "^3.7.4|^4.0",
-        "pestphp/pest-plugin-laravel": "^3.0|^4.0"
+        "pestphp/pest": "^3.7.4",
+        "pestphp/pest-plugin-laravel": "^3.0"
     },
     "autoload": {
         "psr-4": {

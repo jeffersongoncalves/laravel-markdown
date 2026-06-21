@@ -8,15 +8,20 @@ return [
     |--------------------------------------------------------------------------
     |
     | Controls how raw, inline HTML inside the markdown source is handled.
-    | One of: 'allow', 'escape', 'strip'. The default is 'allow' so that
-    | trusted authoring (READMEs, imported article bodies) keeps its HTML —
-    | this means the OUTPUT IS UNSAFE for untrusted input and MUST be passed
-    | through an HTML sanitizer (e.g. jeffersongoncalves/laravel-html-sanitizer)
-    | before display.
+    | One of: 'allow', 'escape', 'strip'. The default is 'escape', which is
+    | safe by default: raw HTML in the source (including <script>) is escaped
+    | and rendered as visible text rather than live markup.
+    |
+    | Set this to 'allow' ONLY for fully trusted content (e.g. your own
+    | READMEs or curated article bodies). With 'allow', raw HTML passes
+    | through and the OUTPUT IS UNSAFE for untrusted input — you MUST then
+    | run the output through an HTML sanitizer (such as
+    | jeffersongoncalves/laravel-html-sanitizer) before displaying it.
+    | 'strip' removes raw HTML entirely.
     |
     */
 
-    'html_input' => 'allow',
+    'html_input' => 'escape',
 
     /*
     |--------------------------------------------------------------------------

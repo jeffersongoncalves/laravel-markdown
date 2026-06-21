@@ -13,6 +13,12 @@
 
 A shared CommonMark renderer for Laravel with GitHub Flavored Markdown, optional heading permalinks, and server-side syntax highlighting on fenced code blocks. Highlighting is class-based (`<span class="hl-…">` tokens via [tempest/highlight](https://github.com/tempestphp/highlight)'s `CssTheme`) so the markup survives HTML sanitisation — you style the `.hl-*` classes in your own CSS.
 
+The renderer is **safe by default**: raw HTML in the markdown source is escaped, so untrusted input cannot inject live markup such as `<script>`.
+
+## Requirements
+
+This package requires **PHP 8.4+**. The floor is inherited from the syntax highlighter [tempest/highlight](https://github.com/tempestphp/highlight), which requires PHP 8.4 from version 2.26 onward; the rest of the package would run on PHP 8.2/8.3, but the highlighter does not, so the package as a whole targets PHP 8.4.
+
 ## Installation
 
 You can install the package via composer:
@@ -31,7 +37,7 @@ This is the contents of the published config file:
 
 ```php
 return [
-    'html_input' => 'allow',
+    'html_input' => 'escape',
     'allow_unsafe_links' => false,
     'heading_permalink' => [
         'symbol' => '#',
@@ -65,8 +71,21 @@ MD);
 
 Add the matching `.hl-*` styles (and `.md-anchor` if you use heading permalinks) to your own CSS.
 
+## HTML safety
+
+By default `html_input` is set to `escape`, so any raw HTML in the markdown source (including `<script>`) is escaped and rendered as visible text — the output is **safe for untrusted input** out of the box. Unsafe link protocols (`javascript:`, `vbscript:`, `data:`, `file:`) are also neutralised because `allow_unsafe_links` defaults to `false`.
+
+If you render only **trusted content** (e.g. your own READMEs or curated article bodies) and need to keep its raw HTML, opt in by setting:
+
+```php
+// config/markdown.php
+'html_input' => 'allow',
+```
+
 > [!WARNING]
-> The renderer runs with `html_input` set to `allow`, so **the output is UNSAFE** for untrusted input (third-party READMEs, imported article bodies): raw HTML in the source is preserved. Always pass the output through an HTML sanitizer such as [jeffersongoncalves/laravel-html-sanitizer](https://github.com/jeffersongoncalves/laravel-html-sanitizer) before displaying it. Class-based highlight tokens are designed to survive sanitisation; inline-style highlighting would not.
+> With `html_input` set to `allow`, raw HTML in the source is preserved and **the output is UNSAFE** for untrusted input. In that mode you MUST pass the output through an HTML sanitizer such as [jeffersongoncalves/laravel-html-sanitizer](https://github.com/jeffersongoncalves/laravel-html-sanitizer) before displaying it. Class-based highlight tokens are designed to survive sanitisation; inline-style highlighting would not.
+
+You can also set `html_input` to `strip` to remove raw HTML entirely.
 
 ## Testing
 

@@ -75,3 +75,58 @@ it('honours a custom heading permalink html class from config', function () {
     expect($html)->toContain('custom-anchor')
         ->not->toContain('md-anchor');
 });
+
+it('escapes raw HTML by default (safe out of the box)', function () {
+    expect(config('markdown.html_input'))->toBe('escape');
+
+    $html = Markdown::render('<script>alert(1)</script>'."\n\n".'<div>hi</div>');
+
+    expect($html)
+        ->not->toContain('<script>')
+        ->not->toContain('<div>')
+        ->toContain('&lt;script&gt;')
+        ->toContain('&lt;div&gt;');
+});
+
+it('passes raw HTML through when html_input is allow', function () {
+    config()->set('markdown.html_input', 'allow');
+
+    $html = Markdown::render('<div>hi</div>'."\n\n".'<span>x</span>');
+
+    expect($html)
+        ->toContain('<div>hi</div>')
+        ->toContain('<span>x</span>');
+});
+
+it('still neutralises <script> even when html_input is allow (GFM tag filter)', function () {
+    config()->set('markdown.html_input', 'allow');
+
+    $html = Markdown::render('<script>alert(1)</script>');
+
+    // GitHub Flavored Markdown's disallowed-raw-html filter escapes <script>
+    // (and other dangerous tags) even when raw HTML is otherwise allowed.
+    expect($html)
+        ->not->toContain('<script>')
+        ->toContain('&lt;script>alert(1)');
+});
+
+it('removes raw HTML when html_input is strip', function () {
+    config()->set('markdown.html_input', 'strip');
+
+    $html = Markdown::render('<script>alert(1)</script>'."\n\n".'<div>hi</div>');
+
+    expect($html)
+        ->not->toContain('<script>')
+        ->not->toContain('<div>')
+        ->not->toContain('&lt;script&gt;');
+});
+
+it('neutralises javascript: links when allow_unsafe_links is false (the default)', function () {
+    expect(config('markdown.allow_unsafe_links'))->toBeFalse();
+
+    $html = Markdown::render('[x](javascript:alert(1))');
+
+    expect($html)
+        ->not->toContain('javascript:')
+        ->toContain('x');
+});
