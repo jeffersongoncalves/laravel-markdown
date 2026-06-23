@@ -16,7 +16,7 @@ description: Development guide for laravel-markdown, a shared CommonMark rendere
 ## Setup
 
 ### Requirements
-- PHP 8.2+
+- PHP 8.4+ (required by `tempest/highlight` from 2.26 onward)
 - Laravel 11, 12, or 13
 - `spatie/laravel-package-tools` ^1.14
 - `league/commonmark` ^2.4
@@ -36,8 +36,10 @@ php artisan vendor:publish --tag="markdown-config"
 
 ```
 src/
-  MarkdownServiceProvider.php   # Registers the package + config file
-  Markdown.php                  # Static render() helper (the whole public API)
+  MarkdownServiceProvider.php   # Registers the package + config file + @markdown Blade directive
+  Markdown.php                  # Static render() engine (memoized converters)
+  MarkdownRenderer.php          # Container-resolvable wrapper behind the facade
+  Facades/Markdown.php          # `Markdown` facade
 config/
   markdown.php                  # html_input, allow_unsafe_links, heading_permalink
 ```
@@ -48,11 +50,20 @@ config/
 JeffersonGoncalves\Markdown\Markdown::render(
     string $markdown,
     bool $headingPermalinks = false,
+    array $options = [],        // per-call overrides of the config keys
 ): string
 ```
 
+Also exposed as:
+
+- **Facade:** `JeffersonGoncalves\Markdown\Facades\Markdown::render(...)`
+- **Blade directive:** `@markdown($source)` / `@markdown($source, true)`
+
+Notes:
+
 - Always enabled: `CommonMarkCoreExtension` + `GithubFlavoredMarkdownExtension`.
 - `HeadingPermalinkExtension` is added only when `$headingPermalinks` is `true`.
+- `$options` overrides the matching config keys for that call only: `html_input`, `allow_unsafe_links`, `heading_permalink` (`['symbol' => ..., 'html_class' => ...]`). Converters are memoized per `(permalinks flag, options)` combination.
 - The block-level `FencedCode` renderer is overridden at **priority 10** (outranks GFM's default) with tempest/highlight's `CodeBlockRenderer` wrapping a `Highlighter` built on `CssTheme`.
 
 ## How highlighting works
@@ -67,10 +78,10 @@ Only the **block-level** `FencedCode` renderer is overridden — inline `` `code
 
 ## Configuration
 
-`config/markdown.php` is read inside `render()` (with the same hardcoded defaults as fallbacks):
+`config/markdown.php` is read inside `render()` (with the same hardcoded defaults as fallbacks; each key can be overridden per call via `$options`):
 
 ```php
-'html_input' => 'allow',            // 'allow' | 'escape' | 'strip'
+'html_input' => 'escape',           // 'allow' | 'escape' | 'strip'
 'allow_unsafe_links' => false,
 'heading_permalink' => [
     'symbol' => '#',
@@ -82,7 +93,7 @@ The `heading_permalink` config is only applied when `render(..., headingPermalin
 
 ## Security
 
-The default `html_input => allow` means raw HTML in the Markdown source is preserved in the output. **The output is UNSAFE for untrusted input.** Pair this package with an HTML sanitizer (e.g. `jeffersongoncalves/laravel-html-sanitizer`) before displaying third-party READMEs or imported article bodies. Never feed the output into a `{!! !!}` Blade sink without sanitising first.
+`html_input` defaults to `escape` — raw HTML in the Markdown source (including `<script>`) is escaped to visible text, so the renderer is **safe by default** for untrusted input. If you opt in to `html_input => allow` (config or `$options`), the output becomes UNSAFE: pair it with an HTML sanitizer (e.g. `jeffersongoncalves/laravel-html-sanitizer`) before displaying third-party READMEs or imported article bodies, and never feed `allow`-rendered output into a `{!! !!}` Blade sink without sanitising first.
 
 ## Testing Patterns
 

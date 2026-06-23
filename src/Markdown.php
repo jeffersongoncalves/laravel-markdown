@@ -38,9 +38,16 @@ class Markdown
 
     private static ?Highlighter $highlighter = null;
 
-    public static function render(string $markdown, bool $headingPermalinks = false): string
+    /**
+     * Render markdown to HTML. Per-call `$options` override the matching config
+     * keys for this call only: `html_input`, `allow_unsafe_links` and
+     * `heading_permalink` (`['symbol' => ..., 'html_class' => ...]`).
+     *
+     * @param  array<string, mixed>  $options
+     */
+    public static function render(string $markdown, bool $headingPermalinks = false, array $options = []): string
     {
-        return self::converter($headingPermalinks)->convert($markdown)->getContent();
+        return self::converter($headingPermalinks, $options)->convert($markdown)->getContent();
     }
 
     /**
@@ -53,24 +60,33 @@ class Markdown
         self::$highlighter = null;
     }
 
-    private static function converter(bool $headingPermalinks): MarkdownConverter
+    /**
+     * @param  array<string, mixed>  $options
+     */
+    private static function converter(bool $headingPermalinks, array $options = []): MarkdownConverter
     {
-        $key = $headingPermalinks ? 'permalinks' : 'default';
+        $key = ($headingPermalinks ? 'permalinks' : 'default')
+            .($options === [] ? '' : ':'.md5(serialize($options)));
 
-        return self::$converters[$key] ??= self::makeConverter($headingPermalinks);
+        return self::$converters[$key] ??= self::makeConverter($headingPermalinks, $options);
     }
 
-    private static function makeConverter(bool $headingPermalinks): MarkdownConverter
+    /**
+     * @param  array<string, mixed>  $options
+     */
+    private static function makeConverter(bool $headingPermalinks, array $options = []): MarkdownConverter
     {
         $config = [
-            'html_input' => config('markdown.html_input', 'escape'),
-            'allow_unsafe_links' => config('markdown.allow_unsafe_links', false),
+            'html_input' => $options['html_input'] ?? config('markdown.html_input', 'escape'),
+            'allow_unsafe_links' => $options['allow_unsafe_links'] ?? config('markdown.allow_unsafe_links', false),
         ];
 
         if ($headingPermalinks) {
+            $permalink = is_array($options['heading_permalink'] ?? null) ? $options['heading_permalink'] : [];
+
             $config['heading_permalink'] = [
-                'symbol' => config('markdown.heading_permalink.symbol', '#'),
-                'html_class' => config('markdown.heading_permalink.html_class', 'md-anchor'),
+                'symbol' => $permalink['symbol'] ?? config('markdown.heading_permalink.symbol', '#'),
+                'html_class' => $permalink['html_class'] ?? config('markdown.heading_permalink.html_class', 'md-anchor'),
             ];
         }
 
