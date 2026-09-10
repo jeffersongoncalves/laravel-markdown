@@ -61,6 +61,8 @@ $html = Markdown::render('# Hello **world**');
 $html = Markdown::render($readme, headingPermalinks: true);
 ```
 
+Heading ids match GitHub's own convention out of the box (`id="{slug}"`, `heading_permalink.id_prefix` defaults to `''`), so hand-written anchors already in your markdown source — a table of contents, a "back to top" link — keep working after rendering. Set `id_prefix` (config or per-call `options`) only if you need to namespace heading ids to avoid collisions with the rest of the host page.
+
 Fenced code blocks are highlighted server-side and emit class-based tokens:
 
 ````php
