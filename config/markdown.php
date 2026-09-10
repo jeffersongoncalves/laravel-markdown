@@ -44,11 +44,18 @@ return [
     | enabled (Markdown::render($markdown, headingPermalinks: true)). The
     | symbol is rendered inside each anchor and html_class is added to it.
     |
+    | id_prefix defaults to '' so generated heading ids match GitHub's own
+    | convention (id="{slug}"), which keeps hand-written anchors in markdown
+    | source (a table of contents, "back to top" links) working after
+    | rendering. Set it to a non-empty value only if you need to namespace
+    | heading ids to avoid collisions with the rest of the host page.
+    |
     */
 
     'heading_permalink' => [
         'symbol' => '#',
         'html_class' => 'md-anchor',
+        'id_prefix' => '',
     ],
 
 ];

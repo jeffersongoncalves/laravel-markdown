@@ -44,6 +44,7 @@ return [
     'heading_permalink' => [
         'symbol' => '#',
         'html_class' => 'md-anchor',
+        'id_prefix' => '',
     ],
 ];
 ```

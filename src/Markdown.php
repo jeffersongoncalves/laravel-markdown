@@ -41,7 +41,7 @@ class Markdown
     /**
      * Render markdown to HTML. Per-call `$options` override the matching config
      * keys for this call only: `html_input`, `allow_unsafe_links` and
-     * `heading_permalink` (`['symbol' => ..., 'html_class' => ...]`).
+     * `heading_permalink` (`['symbol' => ..., 'html_class' => ..., 'id_prefix' => ...]`).
      *
      * @param  array<string, mixed>  $options
      */
@@ -87,6 +87,7 @@ class Markdown
             $config['heading_permalink'] = [
                 'symbol' => $permalink['symbol'] ?? config('markdown.heading_permalink.symbol', '#'),
                 'html_class' => $permalink['html_class'] ?? config('markdown.heading_permalink.html_class', 'md-anchor'),
+                'id_prefix' => $permalink['id_prefix'] ?? config('markdown.heading_permalink.id_prefix', ''),
             ];
         }
 
