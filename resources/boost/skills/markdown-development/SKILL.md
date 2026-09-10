@@ -86,6 +86,7 @@ Only the **block-level** `FencedCode` renderer is overridden — inline `` `code
 'heading_permalink' => [
     'symbol' => '#',
     'html_class' => 'md-anchor',
+    'id_prefix' => '',   // '' = bare GitHub-style ids (id="{slug}")
 ],
 ```
 

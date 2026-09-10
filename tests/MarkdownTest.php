@@ -183,6 +183,29 @@ it('overrides html_input per call via options without mutating config', function
     expect(Markdown::render('<div>hi</div>'))->toContain('&lt;div&gt;');
 });
 
+it('gives headings a bare GitHub-style id by default (no id_prefix)', function () {
+    $html = Markdown::render('# Installation', headingPermalinks: true);
+
+    expect($html)->toContain('id="installation"')
+        ->not->toContain('id="content-installation"');
+});
+
+it('honours a custom heading permalink id_prefix from config', function () {
+    config()->set('markdown.heading_permalink.id_prefix', 'content');
+
+    $html = Markdown::render('# Installation', headingPermalinks: true);
+
+    expect($html)->toContain('id="content-installation"');
+});
+
+it('overrides the heading permalink id_prefix per call via options', function () {
+    $html = Markdown::render('# Installation', headingPermalinks: true, options: [
+        'heading_permalink' => ['id_prefix' => 'content'],
+    ]);
+
+    expect($html)->toContain('id="content-installation"');
+});
+
 it('overrides the heading permalink symbol per call via options', function () {
     $html = Markdown::render('# Hello', headingPermalinks: true, options: [
         'heading_permalink' => ['symbol' => '★'],
