@@ -1,6 +1,6 @@
 <div class="filament-hidden">
 
-![Laravel Markdown](https://raw.githubusercontent.com/jeffersongoncalves/laravel-markdown/master/art/jeffersongoncalves-laravel-markdown.png)
+![Laravel Markdown](https://raw.githubusercontent.com/jeffersongoncalves/laravel-markdown/main/art/jeffersongoncalves-laravel-markdown.png)
 
 </div>
 
@@ -9,8 +9,8 @@
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-FFDD00?style=flat-square&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/jeffersongoncalves)
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/jeffersongoncalves/laravel-markdown.svg?style=flat-square)](https://packagist.org/packages/jeffersongoncalves/laravel-markdown)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/laravel-markdown/tests.yml?branch=master&label=tests&style=flat-square)](https://github.com/jeffersongoncalves/laravel-markdown/actions?query=workflow%3Arun-tests+branch%3Amaster)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/laravel-markdown/fix-php-code-style-issues.yml?branch=master&label=code%20style&style=flat-square)](https://github.com/jeffersongoncalves/laravel-markdown/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3Amaster)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/laravel-markdown/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/jeffersongoncalves/laravel-markdown/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/laravel-markdown/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/jeffersongoncalves/laravel-markdown/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/jeffersongoncalves/laravel-markdown.svg?style=flat-square)](https://packagist.org/packages/jeffersongoncalves/laravel-markdown)
 
 A shared CommonMark renderer for Laravel with GitHub Flavored Markdown, optional heading permalinks, and server-side syntax highlighting on fenced code blocks. Highlighting is class-based (`<span class="hl-…">` tokens via [tempest/highlight](https://github.com/tempestphp/highlight)'s `CssTheme`) so the markup survives HTML sanitisation — you style the `.hl-*` classes in your own CSS.
